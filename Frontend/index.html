@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitoreo P2P - Dashboard Multicolumna</title>
+    <title>Executor P2P</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome para Iconos -->
@@ -17,7 +17,7 @@
         <header class="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-slate-800 pb-4">
             <div>
                 <h1 class="text-2xl font-bold flex items-center gap-2">
-                    <i class="fa-solid fa-columns text-emerald-400"></i> Dashboard P2P - Vista de 4 Columnas
+                    <i class="fa-solid fa-columns text-emerald-400"></i> Executor P2P
                 </h1>
                 <p class="text-sm text-slate-400 mt-1">Monitoreo en paralelo de órdenes de compra, venta y liquidadas/apagadas</p>
             </div>
@@ -58,34 +58,46 @@
         <!-- Controles de Parámetros -->
         <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 mb-6 flex flex-wrap items-center justify-between gap-4 shadow-lg">
             
-            <!-- Controles para /ultimas_ordenes (Menú desplegable + Monto a destacar) -->
-            <div id="controles-ultimas" class="flex flex-wrap items-center gap-4">
-                <div class="flex items-center gap-3">
-                    <label class="text-sm font-medium text-slate-300">Minutos a consultar:</label>
-                    <select id="input-minutos" onchange="cargarDatos()" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-emerald-500 text-slate-200">
-                        <option value="5">5 minutos</option>
-                        <option value="10">10 minutos</option>
-                        <option value="15">15 minutos</option>
-                        <option value="30">30 minutos</option>
-                        <option value="60">60 minutos</option>
-                    </select>
+            <div class="flex flex-wrap items-center gap-4">
+                <!-- Controles para /ultimas_ordenes (Menú desplegable + Monto a destacar) -->
+                <div id="controles-ultimas" class="flex flex-wrap items-center gap-4">
+                    <div class="flex items-center gap-3">
+                        <label class="text-sm font-medium text-slate-300">Minutos a consultar:</label>
+                        <select id="input-minutos" onchange="cargarDatos()" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-emerald-500 text-slate-200">
+                            <option value="5">5 minutos</option>
+                            <option value="10">10 minutos</option>
+                            <option value="15">15 minutos</option>
+                            <option value="30">30 minutos</option>
+                            <option value="60">60 minutos</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <label class="text-sm font-medium text-slate-300">Monto a destacar:</label>
+                        <input type="number" id="input-monto-destacar" value="5000" step="0.01" min="0" oninput="actualizarUI()" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-emerald-500 text-slate-200 w-32 font-mono">
+                    </div>
                 </div>
 
-                <div class="flex items-center gap-3">
-                    <label class="text-sm font-medium text-slate-300">Monto a destacar:</label>
-                    <input type="number" id="input-monto-destacar" value="5000" step="0.01" min="0" oninput="actualizarUI()" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-emerald-500 text-slate-200 w-32 font-mono">
+                <!-- Controles para /ordenes (Rango de Fechas) -->
+                <div id="controles-rango" class="hidden flex flex-wrap items-center gap-3">
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Fecha Inicio:</label>
+                        <input type="datetime-local" id="input-inicio" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Fecha Fin:</label>
+                        <input type="datetime-local" id="input-fin" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-emerald-500">
+                    </div>
                 </div>
-            </div>
 
-            <!-- Controles para /ordenes (Rango de Fechas) -->
-            <div id="controles-rango" class="hidden flex flex-wrap items-center gap-3">
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">Fecha Inicio:</label>
-                    <input type="datetime-local" id="input-inicio" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-emerald-500">
-                </div>
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">Fecha Fin:</label>
-                    <input type="datetime-local" id="input-fin" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-emerald-500">
+                <!-- Filtro por Comerciante (Nickname) -->
+                <div class="flex items-center gap-2">
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                        </span>
+                        <input type="text" id="input-buscador-nickname" placeholder="Filtrar comerciante..." oninput="actualizarUI()" class="bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-1.5 text-sm focus:outline-none focus:border-emerald-500 text-slate-200 w-44">
+                    </div>
                 </div>
             </div>
 
@@ -298,7 +310,7 @@
                 actualizarUI();
             } catch (error) {
                 console.error(error);
-                console.warn('No se pudo conectar a la API local en http://127.0.0.1:8000.');
+                console.warn('No se pudo conectar a la API local.');
             }
         }
 
@@ -346,11 +358,8 @@
         function calcularVolumenTotal(lista) {
             return lista.reduce((total, item) => {
                 const cantStr = String(item.cantidad_transaccionada ?? item.cantidad_actual ?? '0').replace(',', '.');
-                const precStr = String(item.precio ?? '0').replace(',', '.');
                 const cant = parseFloat(cantStr) || 0;
-                const prec = parseFloat(precStr) || 0;
-                const vol = prec > 0 ? (cant * prec) : cant;
-                return total + vol;
+                return total + cant;
             }, 0);
         }
 
@@ -366,11 +375,28 @@
 
             let listas = clasificarRegistros(datosGlobales.data || {});
 
+            // 1. Filtrar por Exchange
             if (exchangeSeleccionado !== 'todos') {
                 listas.compras = listas.compras.filter(item => (item.exchange || '').toLowerCase().includes(exchangeSeleccionado));
                 listas.ventas = listas.ventas.filter(item => (item.exchange || '').toLowerCase().includes(exchangeSeleccionado));
                 listas.compras_liq = listas.compras_liq.filter(item => (item.exchange || '').toLowerCase().includes(exchangeSeleccionado));
                 listas.ventas_liq = listas.ventas_liq.filter(item => (item.exchange || '').toLowerCase().includes(exchangeSeleccionado));
+            }
+
+            // 2. Filtrar por Nombre de Comerciante (Nickname)
+            const inputNick = document.getElementById('input-buscador-nickname');
+            const textoFiltroNick = inputNick ? inputNick.value.toLowerCase().trim() : '';
+
+            if (textoFiltroNick !== '') {
+                const filtrarPorNickname = (item) => {
+                    const nick = (item.nickName || '').toLowerCase();
+                    return nick.includes(textoFiltroNick);
+                };
+
+                listas.compras = listas.compras.filter(filtrarPorNickname);
+                listas.ventas = listas.ventas.filter(filtrarPorNickname);
+                listas.compras_liq = listas.compras_liq.filter(filtrarPorNickname);
+                listas.ventas_liq = listas.ventas_liq.filter(filtrarPorNickname);
             }
 
             document.getElementById('badge-compras').textContent = listas.compras.length;
@@ -398,7 +424,6 @@
                 return;
             }
 
-            // Obtener dinámicamente el valor ingresado en el input (por defecto 0 si está vacío)
             const inputMonto = document.getElementById('input-monto-destacar');
             const umbralDestacar = inputMonto ? parseFloat(inputMonto.value) || 0 : 5000;
 
@@ -420,7 +445,6 @@
                 const cantidad = parseFloat(cantStr) || 0;
                 const precio = parseFloat(precStr) || 0;
 
-                // Destacar si la cantidad es mayor o igual al valor introducido en el input
                 const esGrande = cantidad >= umbralDestacar;
 
                 const tr = document.createElement('tr');
