@@ -81,6 +81,11 @@ EXCHANGES_CONFIG = [
         "nombre": "mexc",
         "coleccion_precios": db_source["MXC_PRICE"],
         "coleccion_ordenes": db_target["1EXECUTED_ORDERS"]
+    },
+    {
+        "nombre": "bitget",
+        "coleccion_precios": db_source["BGT_PRICE"],
+        "coleccion_ordenes": db_target["1EXECUTED_ORDERS"]
     }
 ]
 
