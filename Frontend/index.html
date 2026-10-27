@@ -116,47 +116,18 @@
             <span><i class="fa-solid fa-bolt text-emerald-400"></i> Auto-refresco: <strong id="lbl-timer" class="text-emerald-400 font-mono font-bold text-sm">8s</strong></span>
         </div>
 
-        <!-- Layout de 4 Columnas Principales (Kanban) sin restricción de ancho máximo -->
+        <!-- Layout de 4 Columnas (Kanban) en el orden exacto solicitado -->
         <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4">
             
-            <!-- COLUMNA 1: Compras -->
+            <!-- 1. Ventas (VERDE) -->
             <div class="bg-slate-800 rounded-xl border border-slate-700 flex flex-col h-[680px] shadow-xl overflow-hidden">
                 <div class="p-3 bg-slate-850 border-b border-slate-700 flex justify-between items-center">
                     <h2 class="font-bold text-emerald-400 flex items-center gap-2 text-sm uppercase tracking-wider">
-                        <i class="fa-solid fa-cart-shopping"></i> Compras
-                    </h2>
-                    <div class="flex items-center gap-3">
-                        <span id="vol-compras" class="text-emerald-400 font-bold text-sm font-mono">0,00</span>
-                        <span id="badge-compras" class="bg-emerald-500/10 text-emerald-400 text-xs px-2.5 py-1 rounded-full font-semibold border border-emerald-500/20">0</span>
-                    </div>
-                </div>
-                <div class="overflow-y-auto flex-1 p-1">
-                    <table class="w-full text-left border-collapse text-xs table-auto">
-                        <thead class="sticky top-0 bg-slate-800/95 backdrop-blur z-10 text-slate-400 uppercase tracking-wider border-b border-slate-700">
-                            <tr>
-                                <th class="py-2 px-1.5 w-[18%]">Hora</th>
-                                <th class="py-2 px-1.5 w-[32%]">Nickname</th>
-                                <th class="py-2 px-1.5 w-[15%] text-center">Exch.</th>
-                                <th class="py-2 px-1.5 w-[20%] text-right">Cant.</th>
-                                <th class="py-2 px-1.5 w-[15%] text-right">Precio</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabla-compras" class="divide-y divide-slate-700/50">
-                            <!-- Datos dinámicos -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- COLUMNA 2: Ventas -->
-            <div class="bg-slate-800 rounded-xl border border-slate-700 flex flex-col h-[680px] shadow-xl overflow-hidden">
-                <div class="p-3 bg-slate-850 border-b border-slate-700 flex justify-between items-center">
-                    <h2 class="font-bold text-rose-400 flex items-center gap-2 text-sm uppercase tracking-wider">
                         <i class="fa-solid fa-tag"></i> Ventas
                     </h2>
                     <div class="flex items-center gap-3">
-                        <span id="vol-ventas" class="text-rose-400 font-bold text-sm font-mono">0,00</span>
-                        <span id="badge-ventas" class="bg-rose-500/10 text-rose-400 text-xs px-2.5 py-1 rounded-full font-semibold border border-rose-500/20">0</span>
+                        <span id="vol-ventas" class="text-emerald-400 font-bold text-sm font-mono">0,00</span>
+                        <span id="badge-ventas" class="bg-emerald-500/10 text-emerald-400 text-xs px-2.5 py-1 rounded-full font-semibold border border-emerald-500/20">0</span>
                     </div>
                 </div>
                 <div class="overflow-y-auto flex-1 p-1">
@@ -170,22 +141,47 @@
                                 <th class="py-2 px-1.5 w-[15%] text-right">Precio</th>
                             </tr>
                         </thead>
-                        <tbody id="tabla-ventas" class="divide-y divide-slate-700/50">
-                            <!-- Datos dinámicos -->
-                        </tbody>
+                        <tbody id="tabla-ventas" class="divide-y divide-slate-700/50"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- COLUMNA 3: Compras (Liquidado/Apagado) -->
+            <!-- 2. Compras (ROJO) -->
+            <div class="bg-slate-800 rounded-xl border border-slate-700 flex flex-col h-[680px] shadow-xl overflow-hidden">
+                <div class="p-3 bg-slate-850 border-b border-slate-700 flex justify-between items-center">
+                    <h2 class="font-bold text-rose-400 flex items-center gap-2 text-sm uppercase tracking-wider">
+                        <i class="fa-solid fa-cart-shopping"></i> Compras
+                    </h2>
+                    <div class="flex items-center gap-3">
+                        <span id="vol-compras" class="text-rose-400 font-bold text-sm font-mono">0,00</span>
+                        <span id="badge-compras" class="bg-rose-500/10 text-rose-400 text-xs px-2.5 py-1 rounded-full font-semibold border border-rose-500/20">0</span>
+                    </div>
+                </div>
+                <div class="overflow-y-auto flex-1 p-1">
+                    <table class="w-full text-left border-collapse text-xs table-auto">
+                        <thead class="sticky top-0 bg-slate-800/95 backdrop-blur z-10 text-slate-400 uppercase tracking-wider border-b border-slate-700">
+                            <tr>
+                                <th class="py-2 px-1.5 w-[18%]">Hora</th>
+                                <th class="py-2 px-1.5 w-[32%]">Nickname</th>
+                                <th class="py-2 px-1.5 w-[15%] text-center">Exch.</th>
+                                <th class="py-2 px-1.5 w-[20%] text-right">Cant.</th>
+                                <th class="py-2 px-1.5 w-[15%] text-right">Precio</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-compras" class="divide-y divide-slate-700/50"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 3. Ventas Liquidadas/Apagadas (VERDE) -->
             <div class="bg-slate-800 rounded-xl border border-slate-700 flex flex-col h-[680px] shadow-xl overflow-hidden">
                 <div class="p-3 bg-slate-850 border-b border-slate-700 flex justify-between items-center">
                     <h2 class="font-bold text-teal-400 flex items-center gap-2 text-sm uppercase tracking-wider">
-                        <i class="fa-solid fa-check-double"></i> Compras Liq./Apag.
+                        <i class="fa-solid fa-triangle-exclamation"></i> Ventas Liq./Apag.
                     </h2>
                     <div class="flex items-center gap-3">
-                        <span id="vol-compras-liq" class="text-teal-400 font-bold text-sm font-mono">0,00</span>
-                        <span id="badge-compras-liq" class="bg-teal-500/10 text-teal-400 text-xs px-2.5 py-1 rounded-full font-semibold border border-teal-500/20">0</span>
+                        <span id="vol-ventas-liq" class="text-teal-400 font-bold text-sm font-mono">0,00</span>
+                        <span id="badge-ventas-liq" class="bg-teal-500/10 text-teal-400 text-xs px-2.5 py-1 rounded-full font-semibold border border-teal-500/20">0</span>
                     </div>
                 </div>
                 <div class="overflow-y-auto flex-1 p-1">
@@ -199,22 +195,20 @@
                                 <th class="py-2 px-1.5 w-[15%] text-right">Precio</th>
                             </tr>
                         </thead>
-                        <tbody id="tabla-compras-liq" class="divide-y divide-slate-700/50">
-                            <!-- Datos dinámicos -->
-                        </tbody>
+                        <tbody id="tabla-ventas-liq" class="divide-y divide-slate-700/50"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- COLUMNA 4: Ventas (Liquidado/Apagado) -->
+            <!-- 4. Compras Liquidadas/Apagadas (ROJO) -->
             <div class="bg-slate-800 rounded-xl border border-slate-700 flex flex-col h-[680px] shadow-xl overflow-hidden">
                 <div class="p-3 bg-slate-850 border-b border-slate-700 flex justify-between items-center">
                     <h2 class="font-bold text-amber-400 flex items-center gap-2 text-sm uppercase tracking-wider">
-                        <i class="fa-solid fa-triangle-exclamation"></i> Ventas Liq./Apag.
+                        <i class="fa-solid fa-check-double"></i> Compras Liq./Apag.
                     </h2>
                     <div class="flex items-center gap-3">
-                        <span id="vol-ventas-liq" class="text-amber-400 font-bold text-sm font-mono">0,00</span>
-                        <span id="badge-ventas-liq" class="bg-amber-500/10 text-amber-400 text-xs px-2.5 py-1 rounded-full font-semibold border border-amber-500/20">0</span>
+                        <span id="vol-compras-liq" class="text-amber-400 font-bold text-sm font-mono">0,00</span>
+                        <span id="badge-compras-liq" class="bg-amber-500/10 text-amber-400 text-xs px-2.5 py-1 rounded-full font-semibold border border-amber-500/20">0</span>
                     </div>
                 </div>
                 <div class="overflow-y-auto flex-1 p-1">
@@ -228,9 +222,7 @@
                                 <th class="py-2 px-1.5 w-[15%] text-right">Precio</th>
                             </tr>
                         </thead>
-                        <tbody id="tabla-ventas-liq" class="divide-y divide-slate-700/50">
-                            <!-- Datos dinámicos -->
-                        </tbody>
+                        <tbody id="tabla-compras-liq" class="divide-y divide-slate-700/50"></tbody>
                     </table>
                 </div>
             </div>
@@ -247,13 +239,9 @@
         let tiempoRestante = 8;
         let timerInterval = null;
 
-        // Lista de exchanges disponibles
         const todosLosExchanges = ['binance', 'bybit', 'bitget', 'bingx', 'mexc'];
-
-        // Conjunto (Set) con los exchanges seleccionados por defecto (los 5 activos)
         let exchangesSeleccionados = new Set(todosLosExchanges);
 
-        // Convertir fecha y hora UTC a UTC-4
         function convertirUtcAUltimaHora(fechaStr, horaStr) {
             if (!fechaStr || !horaStr) return horaStr || '-';
             try {
@@ -273,7 +261,6 @@
             }
         }
 
-        // Inicializar fechas por defecto en el input de rango (hoy)
         function inicializarFechas() {
             const hoy = new Date();
             const anio = hoy.getFullYear();
@@ -486,23 +473,23 @@
                 listas.ventas_liq = listas.ventas_liq.filter(filtrarPorNickname);
             }
 
-            document.getElementById('badge-compras').textContent = listas.compras.length;
             document.getElementById('badge-ventas').textContent = listas.ventas.length;
-            document.getElementById('badge-compras-liq').textContent = listas.compras_liq.length;
+            document.getElementById('badge-compras').textContent = listas.compras.length;
             document.getElementById('badge-ventas-liq').textContent = listas.ventas_liq.length;
+            document.getElementById('badge-compras-liq').textContent = listas.compras_liq.length;
 
-            document.getElementById('vol-compras').textContent = formatearNumero(calcularVolumenTotal(listas.compras));
             document.getElementById('vol-ventas').textContent = formatearNumero(calcularVolumenTotal(listas.ventas));
-            document.getElementById('vol-compras-liq').textContent = formatearNumero(calcularVolumenTotal(listas.compras_liq));
+            document.getElementById('vol-compras').textContent = formatearNumero(calcularVolumenTotal(listas.compras));
             document.getElementById('vol-ventas-liq').textContent = formatearNumero(calcularVolumenTotal(listas.ventas_liq));
+            document.getElementById('vol-compras-liq').textContent = formatearNumero(calcularVolumenTotal(listas.compras_liq));
 
-            renderizarTablaColumna('tabla-compras', listas.compras);
-            renderizarTablaColumna('tabla-ventas', listas.ventas);
-            renderizarTablaColumna('tabla-compras-liq', listas.compras_liq);
-            renderizarTablaColumna('tabla-ventas-liq', listas.ventas_liq);
+            renderizarTablaColumna('tabla-ventas', listas.ventas, 'verde');
+            renderizarTablaColumna('tabla-compras', listas.compras, 'rojo');
+            renderizarTablaColumna('tabla-ventas-liq', listas.ventas_liq, 'verde');
+            renderizarTablaColumna('tabla-compras-liq', listas.compras_liq, 'rojo');
         }
 
-        function renderizarTablaColumna(elementId, lista) {
+        function renderizarTablaColumna(elementId, lista, tipoColor) {
             const tbody = document.getElementById(elementId);
             tbody.innerHTML = '';
 
@@ -544,11 +531,14 @@
                     tr.className = "hover:bg-slate-750 transition border-l-4 border-transparent";
                 }
 
+                let colorCantidadClass = tipoColor === 'verde' ? 'text-emerald-400 font-semibold' : 'text-rose-400 font-semibold';
+                if (esGrande) colorCantidadClass = 'text-amber-300 font-bold';
+
                 tr.innerHTML = `
                     <td class="py-2.5 px-1.5 text-slate-400 font-mono text-[11px]">${horaConvertida}</td>
                     <td class="py-2.5 px-1.5 truncate max-w-[120px]" title="${item.nickName || '-'}">${item.nickName || '-'}</td>
                     <td class="py-2.5 px-1.5 text-center">${badgeExchange}</td>
-                    <td class="py-2.5 px-1.5 text-right ${esGrande ? 'text-amber-300 font-bold' : 'text-emerald-400 font-semibold'}">
+                    <td class="py-2.5 px-1.5 text-right ${colorCantidadClass}">
                         ${cantidad.toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
                     </td>
                     <td class="py-2.5 px-1.5 text-right font-mono">${item.precio || '-'}</td>
