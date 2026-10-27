@@ -23,40 +23,38 @@ MONGO_CLUSTER = os.getenv("MONGO_CLUSTER2")
 
 MONGO_URI = f"mongodb+srv://{MONGO_USER}:{MONGO_PASS}@{MONGO_CLUSTER}/?retryWrites=true&w=majority"
 
+# Definir la zona horaria UTC-4
+UTC_MINUS_4 = timezone(timedelta(hours=-4))
+
 # Variable global para mantener referencia al proceso del collector
 collector_process = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global collector_process
-    # Se ejecuta al iniciar la API
     print("🚀 Iniciando collector.py en segundo plano...")
     
-    # Resolver la ruta absoluta de collector.py de manera dinámica y segura para Windows/Linux
     current_dir = os.path.dirname(os.path.abspath(__file__))
     collector_path = os.path.join(current_dir, "collector.py")
     
-    # Usamos sys.executable para asegurar que use el mismo entorno virtual de Python
     collector_process = subprocess.Popen([sys.executable, collector_path])
     
     yield
     
-    # Se ejecuta al apagar la API
     if collector_process:
         print("🛑 Deteniendo collector.py...")
         collector_process.terminate()
         collector_process.wait()
 
-# Pasamos el lifespan a la aplicación FastAPI
 app = FastAPI(title="API Monitor P2P Bolivia", version="1.6.0", lifespan=lifespan)
 
 # Configuración de CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Permitir solicitudes desde cualquier origen (ideal para desarrollo)
+    allow_origins=["*"], 
     allow_credentials=True,
-    allow_methods=["*"],  # Permitir todos los métodos (GET, POST, etc.)
-    allow_headers=["*"],  # Permitir todas las cabeceras
+    allow_methods=["*"], 
+    allow_headers=["*"], 
 )
 
 client = AsyncIOMotorClient(MONGO_URI)
@@ -64,10 +62,6 @@ db = client["P2P_Data"]
 collection = db["1EXECUTED_ORDERS"]
 
 def procesar_y_agrupar_eventos(resultados):
-    """
-    Recorre todos los documentos obtenidos de la base de datos y extrae,
-    limpia y agrupa todos los eventos en tres listas globales consolidadas.
-    """
     compras = []
     ventas = []
     liquidados_apagados = []
@@ -81,7 +75,6 @@ def procesar_y_agrupar_eventos(resultados):
             if not evento:
                 continue
             
-            # Asegurar que cantidad_transaccionada sea float para sumar volúmenes correctamente
             if "cantidad_transaccionada" in evento and evento["cantidad_transaccionada"] is not None:
                 try:
                     evento["cantidad_transaccionada"] = float(evento["cantidad_transaccionada"])
@@ -106,11 +99,14 @@ async def get_ultimas_ordenes(
     minutos: int = Query(..., description="Minutos hacia atrás a consultar (ej: 5, 10, 15, 30, 60)", enum=[5, 10, 15, 30, 60])
 ):
     try:
-        hora_fin = datetime.now(timezone.utc)
-        hora_inicio = hora_fin - timedelta(minutes=minutos)
+        hora_fin_local = datetime.now(UTC_MINUS_4)
+        hora_inicio_local = hora_fin_local - timedelta(minutes=minutos)
+
+        hora_fin_utc = hora_fin_local.astimezone(timezone.utc)
+        hora_inicio_utc = hora_inicio_local.astimezone(timezone.utc)
 
         cursor = collection.find(
-            {"timestamp_analisis": {"$gte": hora_inicio, "$lte": hora_fin}}
+            {"timestamp_analisis": {"$gte": hora_inicio_utc, "$lte": hora_fin_utc}}
         ).sort("timestamp_analisis", -1)
         
         resultados = await cursor.to_list(length=500)
@@ -121,13 +117,17 @@ async def get_ultimas_ordenes(
         volumen_ventas = sum(e.get("cantidad_transaccionada", 0) for e in ventas)
         volumen_liquidados = sum(e.get("cantidad_transaccionada", 0) for e in liquidados_apagados)
 
+        # total_registros ahora suma compras y ventas
+        total_compras_len = len(compras)
+        total_ventas_len = len(ventas)
+
         return {
             "minutos_solicitados": minutos,
-            "Hora_inicio": hora_inicio.strftime("%Y-%m-%d %H:%M:%S"),
-            "Hora_fin": hora_fin.strftime("%Y-%m-%d %H:%M:%S"),
-            "total_registros": len(resultados),
-            "total_compras": len(compras),
-            "total_ventas": len(ventas),
+            "Hora_inicio_UTC_minus_4": hora_inicio_local.strftime("%Y-%m-%d %H:%M:%S"),
+            "Hora_fin_UTC_minus_4": hora_fin_local.strftime("%Y-%m-%d %H:%M:%S"),
+            "total_registros": total_compras_len + total_ventas_len,
+            "total_compras": total_compras_len,
+            "total_ventas": total_ventas_len,
             "total_liquidados_apagados": len(liquidados_apagados),
             "volumen_compras": round(volumen_compras, 2),
             "volumen_ventas": round(volumen_ventas, 2),
@@ -144,24 +144,26 @@ async def get_ultimas_ordenes(
 
 @app.get("/ordenes")
 async def get_ordenes_por_rango(
-    fecha_inicio: str = Query(..., description="Fecha y hora de inicio en formato YYYY-MM-DD HH:MM:SS (Ej: 2026-10-15 17:00:00)"),
-    fecha_fin: str = Query(..., description="Fecha y hora de fin en formato YYYY-MM-DD HH:MM:SS (Ej: 2026-10-15 17:05:00)")
+    fecha_inicio: str = Query(..., description="Fecha y hora de inicio en formato YYYY-MM-DD HH:MM:SS (Ej: 2026-10-27 05:15:00)"),
+    fecha_fin: str = Query(..., description="Fecha y hora de fin en formato YYYY-MM-DD HH:MM:SS (Ej: 2026-10-27 23:59:59)")
 ):
     try:
         try:
-            # Parsear las fechas usando el formato estricto solicitado
-            dt_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
-            dt_fin = datetime.strptime(fecha_fin, "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
+            dt_inicio_local = datetime.strptime(fecha_inicio, "%Y-%m-%d %H:%M:%S").replace(tzinfo=UTC_MINUS_4)
+            dt_fin_local = datetime.strptime(fecha_fin, "%Y-%m-%d %H:%M:%S").replace(tzinfo=UTC_MINUS_4)
+
+            dt_inicio_utc = dt_inicio_local.astimezone(timezone.utc)
+            dt_fin_utc = dt_fin_local.astimezone(timezone.utc)
         except ValueError:
             raise HTTPException(
                 status_code=400, 
-                detail="Formato de fecha inválido. Utilice estrictamente el formato: YYYY-MM-DD HH:MM:SS (ej. 2026-10-15 17:00:00)"
+                detail="Formato de fecha inválido. Utilice estrictamente el formato: YYYY-MM-DD HH:MM:SS (ej. 2026-10-27 05:15:00)"
             )
 
         cursor = collection.find({
             "timestamp_analisis": {
-                "$gte": dt_inicio,
-                "$lte": dt_fin
+                "$gte": dt_inicio_utc,
+                "$lte": dt_fin_utc
             }
         }).sort("timestamp_analisis", -1)
 
@@ -172,12 +174,15 @@ async def get_ordenes_por_rango(
         volumen_ventas = sum(e.get("cantidad_transaccionada", 0) for e in ventas)
         volumen_liquidados = sum(e.get("cantidad_transaccionada", 0) for e in liquidados_apagados)
 
+        total_compras_len = len(compras)
+        total_ventas_len = len(ventas)
+
         return {
-            "Hora_inicio": dt_inicio.strftime("%Y-%m-%d %H:%M:%S"),
-            "Hora_fin": dt_fin.strftime("%Y-%m-%d %H:%M:%S"),
-            "total_registros": len(resultados),
-            "total_compras": len(compras),
-            "total_ventas": len(ventas),
+            "Hora_inicio_UTC_minus_4": dt_inicio_local.strftime("%Y-%m-%d %H:%M:%S"),
+            "Hora_fin_UTC_minus_4": dt_fin_local.strftime("%Y-%m-%d %H:%M:%S"),
+            "total_registros": total_compras_len + total_ventas_len,
+            "total_compras": total_compras_len,
+            "total_ventas": total_ventas_len,
             "total_liquidados_apagados": len(liquidados_apagados),
             "volumen_compras": round(volumen_compras, 2),
             "volumen_ventas": round(volumen_ventas, 2),

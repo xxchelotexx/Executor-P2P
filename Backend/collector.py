@@ -1,7 +1,7 @@
 import os
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from pymongo import MongoClient
 from dotenv import load_dotenv
 
@@ -113,7 +113,7 @@ def extraer_comerciantes(lista_merchants):
                 
     return diccionario
 
-def comparar_seccion(anterior_dict, actual_dict, tipo_seccion, exchange_val):
+def comparar_seccion(anterior_dict, actual_dict, tipo_seccion, exchange_val, fecha_str, hora_str):
     eventos = []
     
     if tipo_seccion == "merchant_buy":
@@ -138,7 +138,9 @@ def comparar_seccion(anterior_dict, actual_dict, tipo_seccion, exchange_val):
                     "cantidad_anterior": round(qty_ant, 2),
                     "cantidad_actual": round(qty_act, 2),
                     "precio": datos_ant.get("price"),
-                    "exchange": exchange_val
+                    "exchange": exchange_val,
+                    "fecha": fecha_str,
+                    "hora": hora_str
                 })
         else:
             diferencia = round(qty_ant, 2)
@@ -149,7 +151,9 @@ def comparar_seccion(anterior_dict, actual_dict, tipo_seccion, exchange_val):
                 "cantidad_anterior": round(qty_ant, 2),
                 "cantidad_actual": 0.0,
                 "precio": datos_ant.get("price"),
-                "exchange": exchange_val
+                "exchange": exchange_val,
+                "fecha": fecha_str,
+                "hora": hora_str
             })
 
     return eventos
@@ -171,14 +175,22 @@ def procesar_exchange(cfg):
         id_actual = registro_actual["_id"]
         id_anterior = registro_anterior["_id"]
 
+        # Evitar duplicados por índice único de MongoDB
         existe_registro = col_orders.find_one({
             "exchange": nombre_exchange,
-            "id_registro_actual": id_actual,
-            "id_registro_anterior": id_anterior
+            "id_registro_actual": id_actual
         })
-
         if existe_registro:
             return
+
+        # Extraer el timestamp del origen y formatearlo
+        orig_timestamp = registro_actual.get("timestamp")
+        if isinstance(orig_timestamp, datetime):
+            fecha_str = orig_timestamp.strftime('%d-%m-%Y')
+            hora_str = orig_timestamp.strftime('%H:%M:%S')
+        else:
+            fecha_str = None
+            hora_str = None
 
         buy_anterior = extraer_comerciantes(registro_anterior.get("merchant_buy", []))
         buy_actual = extraer_comerciantes(registro_actual.get("merchant_buy", []))
@@ -187,16 +199,30 @@ def procesar_exchange(cfg):
         sell_actual = extraer_comerciantes(registro_actual.get("merchant_sell", []))
 
         if buy_anterior == buy_actual and sell_anterior == sell_actual:
-            # print(f"[{nombre_exchange.upper()}] Sin cambios")
             return
 
-        eventos_buy = comparar_seccion(buy_anterior, buy_actual, "merchant_buy", nombre_exchange)
-        eventos_sell = comparar_seccion(sell_anterior, sell_actual, "merchant_sell", nombre_exchange)
+        eventos_buy = comparar_seccion(buy_anterior, buy_actual, "merchant_buy", nombre_exchange, fecha_str, hora_str)
+        eventos_sell = comparar_seccion(sell_anterior, sell_actual, "merchant_sell", nombre_exchange, fecha_str, hora_str)
 
         if eventos_buy or eventos_sell:
+            # Consultar los últimos registros guardados en destino para este exchange para comparar el estado real
+            ultimo_guardado = col_orders.find_one(
+                {"exchange": nombre_exchange},
+                sort=[("timestamp_analisis", -1)]
+            )
+
+            # Validar si los eventos actuales son exactamente los mismos que los del último documento guardado
+            if ultimo_guardado:
+                ult_buy = ultimo_guardado.get("merchant_buy_eventos")
+                ult_sell = ultimo_guardado.get("merchant_sell_eventos")
+                
+                # Si los eventos de compra y venta son idénticos en contenido, los descartamos para evitar spam
+                if ult_buy == (eventos_buy if eventos_buy else None) and ult_sell == (eventos_sell if eventos_sell else None):
+                    return
+
             resultado_analisis = {
                 "exchange": nombre_exchange,
-                "timestamp_analisis": datetime.utcnow(),
+                "timestamp_analisis": datetime.now(timezone.utc),
                 "id_registro_actual": id_actual,
                 "id_registro_anterior": id_anterior,
                 "merchant_buy_eventos": eventos_buy if eventos_buy else None,
@@ -204,7 +230,7 @@ def procesar_exchange(cfg):
             }
 
             col_orders.insert_one(resultado_analisis)
-            print(f"[{datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')}] 🔍 [{nombre_exchange.upper()}] Reducciones detectadas y guardadas en BD de destino.")
+            print(f"[{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')}] 🔍 [{nombre_exchange.upper()}] Reducciones detectadas y guardadas en BD de destino.")
 
     except Exception as e:
         print(f"❌ Error procesando el exchange {nombre_exchange}: {e}")

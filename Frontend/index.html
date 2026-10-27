@@ -11,7 +11,7 @@
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen font-sans">
 
-    <div class="max-w-[1600px] mx-auto px-4 py-8">
+    <div class="w-full px-4 py-8">
         
         <!-- Header -->
         <header class="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-slate-800 pb-4">
@@ -33,23 +33,23 @@
             </div>
         </header>
 
-        <!-- Filtro por Exchange -->
+        <!-- Filtro por Exchange (Selección Múltiple) -->
         <div class="bg-slate-800 p-3 rounded-xl border border-slate-700 mb-6 flex items-center gap-3 shadow-lg overflow-x-auto">
             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider whitespace-nowrap pl-2">Filtrar Exchange:</span>
             <div class="flex items-center gap-2">
-                <button onclick="filtrarExchange('todos')" id="filtro-todos" class="exchange-filter px-3 py-1.5 rounded-lg border border-emerald-500 bg-emerald-500/20 text-emerald-400 text-xs font-medium flex items-center gap-2 transition hover:bg-slate-700">
-                    <img src="img/exchanges.png" alt="Todos" class="h-5 w-auto object-contain"> Todos
-                </button>
-                <button onclick="filtrarExchange('binance')" id="filtro-binance" class="exchange-filter px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-900 text-slate-400 text-xs font-medium flex items-center gap-2 transition hover:bg-slate-700 hover:text-white">
+                <button onclick="toggleExchange('binance')" id="filtro-binance" class="exchange-filter px-3 py-1.5 rounded-lg border border-emerald-500 bg-emerald-500/20 text-emerald-400 text-xs font-medium flex items-center gap-2 transition hover:bg-slate-700">
                     <img src="img/binance.png" alt="Binance" class="h-5 w-auto object-contain"> Binance
                 </button>
-                <button onclick="filtrarExchange('bybit')" id="filtro-bybit" class="exchange-filter px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-900 text-slate-400 text-xs font-medium flex items-center gap-2 transition hover:bg-slate-700 hover:text-white">
+                <button onclick="toggleExchange('bybit')" id="filtro-bybit" class="exchange-filter px-3 py-1.5 rounded-lg border border-emerald-500 bg-emerald-500/20 text-emerald-400 text-xs font-medium flex items-center gap-2 transition hover:bg-slate-700">
                     <img src="img/bybit.png" alt="Bybit" class="h-5 w-auto object-contain"> Bybit
                 </button>
-                <button onclick="filtrarExchange('bingx')" id="filtro-bingx" class="exchange-filter px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-900 text-slate-400 text-xs font-medium flex items-center gap-2 transition hover:bg-slate-700 hover:text-white">
+                <button onclick="toggleExchange('bitget')" id="filtro-bitget" class="exchange-filter px-3 py-1.5 rounded-lg border border-emerald-500 bg-emerald-500/20 text-emerald-400 text-xs font-medium flex items-center gap-2 transition hover:bg-slate-700">
+                    <img src="img/bitget.png" alt="Bitget" class="h-5 w-auto object-contain"> Bitget
+                </button>
+                <button onclick="toggleExchange('bingx')" id="filtro-bingx" class="exchange-filter px-3 py-1.5 rounded-lg border border-emerald-500 bg-emerald-500/20 text-emerald-400 text-xs font-medium flex items-center gap-2 transition hover:bg-slate-700">
                     <img src="img/bingx.png" alt="BingX" class="h-5 w-auto object-contain"> BingX
                 </button>
-                <button onclick="filtrarExchange('mexc')" id="filtro-mexc" class="exchange-filter px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-900 text-slate-400 text-xs font-medium flex items-center gap-2 transition hover:bg-slate-700 hover:text-white">
+                <button onclick="toggleExchange('mexc')" id="filtro-mexc" class="exchange-filter px-3 py-1.5 rounded-lg border border-emerald-500 bg-emerald-500/20 text-emerald-400 text-xs font-medium flex items-center gap-2 transition hover:bg-slate-700">
                     <img src="img/mexc.png" alt="MEXC" class="h-5 w-auto object-contain"> MEXC
                 </button>
             </div>
@@ -59,7 +59,7 @@
         <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 mb-6 flex flex-wrap items-center justify-between gap-4 shadow-lg">
             
             <div class="flex flex-wrap items-center gap-4">
-                <!-- Controles para /ultimas_ordenes (Menú desplegable + Monto a destacar) -->
+                <!-- Controles para /ultimas_ordenes -->
                 <div id="controles-ultimas" class="flex flex-wrap items-center gap-4">
                     <div class="flex items-center gap-3">
                         <label class="text-sm font-medium text-slate-300">Minutos a consultar:</label>
@@ -90,7 +90,7 @@
                     </div>
                 </div>
 
-                <!-- Filtro por Comerciante (Nickname) -->
+                <!-- Filtro por Comerciante (Nickname) + Botón Limpiar -->
                 <div class="flex items-center gap-2">
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
@@ -98,27 +98,30 @@
                         </span>
                         <input type="text" id="input-buscador-nickname" placeholder="Filtrar comerciante..." oninput="actualizarUI()" class="bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-1.5 text-sm focus:outline-none focus:border-emerald-500 text-slate-200 w-44">
                     </div>
+                    <button onclick="limpiarFiltros()" title="Limpiar todos los filtros" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-1.5 border border-slate-600">
+                        <i class="fa-solid fa-broom text-xs"></i> Limpiar
+                    </button>
                 </div>
             </div>
 
-            <button onclick="cargarDatos()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 shadow-lg shadow-emerald-900/20">
-                <i class="fa-solid fa-rotate"></i> Consultar API
+            <button id="btn-consultar" onclick="cargarDatos()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 shadow-lg shadow-emerald-900/20">
+                <i id="icon-consultar" class="fa-solid fa-rotate"></i> <span id="lbl-btn-consultar">Consultar API</span>
             </button>
         </div>
 
-        <!-- Información de Intervalo -->
-        <div class="text-xs text-slate-400 mb-6 flex gap-6">
+        <!-- Información de Intervalo y Temporizador -->
+        <div class="text-xs text-slate-400 mb-6 flex flex-wrap gap-6 items-center">
             <span><i class="fa-regular fa-clock"></i> Inicio: <strong id="lbl-inicio" class="text-slate-200">-</strong></span>
             <span><i class="fa-regular fa-clock"></i> Fin: <strong id="lbl-fin" class="text-slate-200">-</strong></span>
-            <span><i class="fa-solid fa-bolt text-emerald-400"></i> Auto-refresco: <strong class="text-emerald-400">Cada 10s</strong></span>
+            <span><i class="fa-solid fa-bolt text-emerald-400"></i> Auto-refresco: <strong id="lbl-timer" class="text-emerald-400 font-mono font-bold text-sm">8s</strong></span>
         </div>
 
-        <!-- Layout de 4 Columnas Principales (Kanban) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+        <!-- Layout de 4 Columnas Principales (Kanban) sin restricción de ancho máximo -->
+        <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4">
             
             <!-- COLUMNA 1: Compras -->
-            <div class="bg-slate-800 rounded-xl border border-slate-700 flex flex-col h-[650px] shadow-xl overflow-hidden">
-                <div class="p-4 bg-slate-850 border-b border-slate-700 flex justify-between items-center">
+            <div class="bg-slate-800 rounded-xl border border-slate-700 flex flex-col h-[680px] shadow-xl overflow-hidden">
+                <div class="p-3 bg-slate-850 border-b border-slate-700 flex justify-between items-center">
                     <h2 class="font-bold text-emerald-400 flex items-center gap-2 text-sm uppercase tracking-wider">
                         <i class="fa-solid fa-cart-shopping"></i> Compras
                     </h2>
@@ -127,14 +130,15 @@
                         <span id="badge-compras" class="bg-emerald-500/10 text-emerald-400 text-xs px-2.5 py-1 rounded-full font-semibold border border-emerald-500/20">0</span>
                     </div>
                 </div>
-                <div class="overflow-y-auto flex-1 p-2">
-                    <table class="w-full text-left border-collapse text-xs">
+                <div class="overflow-y-auto flex-1 p-1">
+                    <table class="w-full text-left border-collapse text-xs table-auto">
                         <thead class="sticky top-0 bg-slate-800/95 backdrop-blur z-10 text-slate-400 uppercase tracking-wider border-b border-slate-700">
                             <tr>
-                                <th class="py-2 px-2">Nickname</th>
-                                <th class="py-2 px-2">Exch.</th>
-                                <th class="py-2 px-2 text-right">Cant.</th>
-                                <th class="py-2 px-2 text-right">Precio</th>
+                                <th class="py-2 px-1.5 w-[18%]">Hora</th>
+                                <th class="py-2 px-1.5 w-[32%]">Nickname</th>
+                                <th class="py-2 px-1.5 w-[15%] text-center">Exch.</th>
+                                <th class="py-2 px-1.5 w-[20%] text-right">Cant.</th>
+                                <th class="py-2 px-1.5 w-[15%] text-right">Precio</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-compras" class="divide-y divide-slate-700/50">
@@ -145,8 +149,8 @@
             </div>
 
             <!-- COLUMNA 2: Ventas -->
-            <div class="bg-slate-800 rounded-xl border border-slate-700 flex flex-col h-[650px] shadow-xl overflow-hidden">
-                <div class="p-4 bg-slate-850 border-b border-slate-700 flex justify-between items-center">
+            <div class="bg-slate-800 rounded-xl border border-slate-700 flex flex-col h-[680px] shadow-xl overflow-hidden">
+                <div class="p-3 bg-slate-850 border-b border-slate-700 flex justify-between items-center">
                     <h2 class="font-bold text-rose-400 flex items-center gap-2 text-sm uppercase tracking-wider">
                         <i class="fa-solid fa-tag"></i> Ventas
                     </h2>
@@ -155,14 +159,15 @@
                         <span id="badge-ventas" class="bg-rose-500/10 text-rose-400 text-xs px-2.5 py-1 rounded-full font-semibold border border-rose-500/20">0</span>
                     </div>
                 </div>
-                <div class="overflow-y-auto flex-1 p-2">
-                    <table class="w-full text-left border-collapse text-xs">
+                <div class="overflow-y-auto flex-1 p-1">
+                    <table class="w-full text-left border-collapse text-xs table-auto">
                         <thead class="sticky top-0 bg-slate-800/95 backdrop-blur z-10 text-slate-400 uppercase tracking-wider border-b border-slate-700">
                             <tr>
-                                <th class="py-2 px-2">Nickname</th>
-                                <th class="py-2 px-2">Exch.</th>
-                                <th class="py-2 px-2 text-right">Cant.</th>
-                                <th class="py-2 px-2 text-right">Precio</th>
+                                <th class="py-2 px-1.5 w-[18%]">Hora</th>
+                                <th class="py-2 px-1.5 w-[32%]">Nickname</th>
+                                <th class="py-2 px-1.5 w-[15%] text-center">Exch.</th>
+                                <th class="py-2 px-1.5 w-[20%] text-right">Cant.</th>
+                                <th class="py-2 px-1.5 w-[15%] text-right">Precio</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-ventas" class="divide-y divide-slate-700/50">
@@ -173,8 +178,8 @@
             </div>
 
             <!-- COLUMNA 3: Compras (Liquidado/Apagado) -->
-            <div class="bg-slate-800 rounded-xl border border-slate-700 flex flex-col h-[650px] shadow-xl overflow-hidden">
-                <div class="p-4 bg-slate-850 border-b border-slate-700 flex justify-between items-center">
+            <div class="bg-slate-800 rounded-xl border border-slate-700 flex flex-col h-[680px] shadow-xl overflow-hidden">
+                <div class="p-3 bg-slate-850 border-b border-slate-700 flex justify-between items-center">
                     <h2 class="font-bold text-teal-400 flex items-center gap-2 text-sm uppercase tracking-wider">
                         <i class="fa-solid fa-check-double"></i> Compras Liq./Apag.
                     </h2>
@@ -183,14 +188,15 @@
                         <span id="badge-compras-liq" class="bg-teal-500/10 text-teal-400 text-xs px-2.5 py-1 rounded-full font-semibold border border-teal-500/20">0</span>
                     </div>
                 </div>
-                <div class="overflow-y-auto flex-1 p-2">
-                    <table class="w-full text-left border-collapse text-xs">
+                <div class="overflow-y-auto flex-1 p-1">
+                    <table class="w-full text-left border-collapse text-xs table-auto">
                         <thead class="sticky top-0 bg-slate-800/95 backdrop-blur z-10 text-slate-400 uppercase tracking-wider border-b border-slate-700">
                             <tr>
-                                <th class="py-2 px-2">Nickname</th>
-                                <th class="py-2 px-2">Exch.</th>
-                                <th class="py-2 px-2 text-right">Cant.</th>
-                                <th class="py-2 px-2 text-right">Precio</th>
+                                <th class="py-2 px-1.5 w-[18%]">Hora</th>
+                                <th class="py-2 px-1.5 w-[32%]">Nickname</th>
+                                <th class="py-2 px-1.5 w-[15%] text-center">Exch.</th>
+                                <th class="py-2 px-1.5 w-[20%] text-right">Cant.</th>
+                                <th class="py-2 px-1.5 w-[15%] text-right">Precio</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-compras-liq" class="divide-y divide-slate-700/50">
@@ -201,8 +207,8 @@
             </div>
 
             <!-- COLUMNA 4: Ventas (Liquidado/Apagado) -->
-            <div class="bg-slate-800 rounded-xl border border-slate-700 flex flex-col h-[650px] shadow-xl overflow-hidden">
-                <div class="p-4 bg-slate-850 border-b border-slate-700 flex justify-between items-center">
+            <div class="bg-slate-800 rounded-xl border border-slate-700 flex flex-col h-[680px] shadow-xl overflow-hidden">
+                <div class="p-3 bg-slate-850 border-b border-slate-700 flex justify-between items-center">
                     <h2 class="font-bold text-amber-400 flex items-center gap-2 text-sm uppercase tracking-wider">
                         <i class="fa-solid fa-triangle-exclamation"></i> Ventas Liq./Apag.
                     </h2>
@@ -211,14 +217,15 @@
                         <span id="badge-ventas-liq" class="bg-amber-500/10 text-amber-400 text-xs px-2.5 py-1 rounded-full font-semibold border border-amber-500/20">0</span>
                     </div>
                 </div>
-                <div class="overflow-y-auto flex-1 p-2">
-                    <table class="w-full text-left border-collapse text-xs">
+                <div class="overflow-y-auto flex-1 p-1">
+                    <table class="w-full text-left border-collapse text-xs table-auto">
                         <thead class="sticky top-0 bg-slate-800/95 backdrop-blur z-10 text-slate-400 uppercase tracking-wider border-b border-slate-700">
                             <tr>
-                                <th class="py-2 px-2">Nickname</th>
-                                <th class="py-2 px-2">Exch.</th>
-                                <th class="py-2 px-2 text-right">Cant.</th>
-                                <th class="py-2 px-2 text-right">Precio</th>
+                                <th class="py-2 px-1.5 w-[18%]">Hora</th>
+                                <th class="py-2 px-1.5 w-[32%]">Nickname</th>
+                                <th class="py-2 px-1.5 w-[15%] text-center">Exch.</th>
+                                <th class="py-2 px-1.5 w-[20%] text-right">Cant.</th>
+                                <th class="py-2 px-1.5 w-[15%] text-right">Precio</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-ventas-liq" class="divide-y divide-slate-700/50">
@@ -236,8 +243,35 @@
     <script>
         const API_URL = 'https://executorapi.chelotex.online';
         let modoActual = 'ultimas';
-        let exchangeSeleccionado = 'todos';
         let datosGlobales = null;
+        let tiempoRestante = 8;
+        let timerInterval = null;
+
+        // Lista de exchanges disponibles
+        const todosLosExchanges = ['binance', 'bybit', 'bitget', 'bingx', 'mexc'];
+
+        // Conjunto (Set) con los exchanges seleccionados por defecto (los 5 activos)
+        let exchangesSeleccionados = new Set(todosLosExchanges);
+
+        // Convertir fecha y hora UTC a UTC-4
+        function convertirUtcAUltimaHora(fechaStr, horaStr) {
+            if (!fechaStr || !horaStr) return horaStr || '-';
+            try {
+                const [dia, mes, anio] = fechaStr.split('-');
+                const fechaUtc = new Date(`${anio}-${mes}-${dia}T${horaStr}.000Z`);
+                if (isNaN(fechaUtc.getTime())) return horaStr;
+
+                const fechaUtcMinus4 = new Date(fechaUtc.getTime() - (4 * 60 * 60 * 1000));
+
+                const hh = String(fechaUtcMinus4.getUTCHours()).padStart(2, '0');
+                const mm = String(fechaUtcMinus4.getUTCMinutes()).padStart(2, '0');
+                const ss = String(fechaUtcMinus4.getUTCSeconds()).padStart(2, '0');
+
+                return `${hh}:${mm}:${ss}`;
+            } catch (e) {
+                return horaStr;
+            }
+        }
 
         // Inicializar fechas por defecto en el input de rango (hoy)
         function inicializarFechas() {
@@ -271,20 +305,53 @@
             cargarDatos();
         }
 
-        function filtrarExchange(exchange) {
-            exchangeSeleccionado = exchange;
+        function toggleExchange(exchange) {
+            const btn = document.getElementById(`filtro-${exchange}`);
             
-            const botones = document.querySelectorAll('.exchange-filter');
-            botones.forEach(btn => {
+            if (exchangesSeleccionados.has(exchange)) {
+                exchangesSeleccionados.delete(exchange);
                 btn.className = "exchange-filter px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-900 text-slate-400 text-xs font-medium flex items-center gap-2 transition hover:bg-slate-700 hover:text-white";
-            });
-
-            const btnActivo = document.getElementById(`filtro-${exchange}`);
-            if (btnActivo) {
-                btnActivo.className = "exchange-filter px-3 py-1.5 rounded-lg border border-emerald-500 bg-emerald-500/20 text-emerald-400 text-xs font-medium flex items-center gap-2 transition hover:bg-slate-700";
+            } else {
+                exchangesSeleccionados.add(exchange);
+                btn.className = "exchange-filter px-3 py-1.5 rounded-lg border border-emerald-500 bg-emerald-500/20 text-emerald-400 text-xs font-medium flex items-center gap-2 transition hover:bg-slate-700";
             }
 
             actualizarUI();
+        }
+
+        function limpiarFiltros() {
+            const inputNick = document.getElementById('input-buscador-nickname');
+            if (inputNick) inputNick.value = '';
+
+            document.getElementById('input-minutos').value = '5';
+            document.getElementById('input-monto-destacar').value = '5000';
+
+            inicializarFechas();
+
+            exchangesSeleccionados = new Set(todosLosExchanges);
+            todosLosExchanges.forEach(ex => {
+                const btn = document.getElementById(`filtro-${ex}`);
+                if (btn) {
+                    btn.className = "exchange-filter px-3 py-1.5 rounded-lg border border-emerald-500 bg-emerald-500/20 text-emerald-400 text-xs font-medium flex items-center gap-2 transition hover:bg-slate-700";
+                }
+            });
+
+            actualizarUI();
+        }
+
+        function iniciarTimerAutoRefresco() {
+            if (timerInterval) clearInterval(timerInterval);
+            tiempoRestante = 8;
+            document.getElementById('lbl-timer').textContent = `${tiempoRestante}s`;
+
+            timerInterval = setInterval(() => {
+                tiempoRestante--;
+                if (tiempoRestante <= 0) {
+                    cargarDatos();
+                } else {
+                    document.getElementById('lbl-timer').textContent = `${tiempoRestante}s`;
+                }
+            }, 1000);
         }
 
         async function cargarDatos() {
@@ -302,6 +369,15 @@
                 url = `${API_URL}/ordenes?fecha_inicio=${encodeURIComponent(fechaInicio)}&fecha_fin=${encodeURIComponent(fechaFin)}`;
             }
 
+            const btn = document.getElementById('btn-consultar');
+            const icon = document.getElementById('icon-consultar');
+            const lbl = document.getElementById('lbl-btn-consultar');
+
+            btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+            icon.className = "fa-solid fa-spinner fa-spin";
+            lbl.textContent = "Consultando...";
+
             try {
                 const response = await fetch(url, { headers: { 'accept': '*/*' } });
                 if (!response.ok) throw new Error('Error al conectar con la API');
@@ -311,6 +387,13 @@
             } catch (error) {
                 console.error(error);
                 console.warn('No se pudo conectar a la API local.');
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+                icon.className = "fa-solid fa-rotate";
+                lbl.textContent = "Consultar API";
+
+                iniciarTimerAutoRefresco();
             }
         }
 
@@ -370,20 +453,24 @@
         function actualizarUI() {
             if (!datosGlobales) return;
 
-            document.getElementById('lbl-inicio').textContent = datosGlobales.Hora_inicio || '-';
-            document.getElementById('lbl-fin').textContent = datosGlobales.Hora_fin || '-';
+            document.getElementById('lbl-inicio').textContent = datosGlobales.Hora_inicio_UTC_minus_4 || '-';
+            document.getElementById('lbl-fin').textContent = datosGlobales.Hora_fin_UTC_minus_4 || '-';
 
             let listas = clasificarRegistros(datosGlobales.data || {});
 
-            // 1. Filtrar por Exchange
-            if (exchangeSeleccionado !== 'todos') {
-                listas.compras = listas.compras.filter(item => (item.exchange || '').toLowerCase().includes(exchangeSeleccionado));
-                listas.ventas = listas.ventas.filter(item => (item.exchange || '').toLowerCase().includes(exchangeSeleccionado));
-                listas.compras_liq = listas.compras_liq.filter(item => (item.exchange || '').toLowerCase().includes(exchangeSeleccionado));
-                listas.ventas_liq = listas.ventas_liq.filter(item => (item.exchange || '').toLowerCase().includes(exchangeSeleccionado));
-            }
+            const filtrarPorExchanges = (item) => {
+                const exItem = (item.exchange || '').toLowerCase();
+                for (let ex of exchangesSeleccionados) {
+                    if (exItem.includes(ex)) return true;
+                }
+                return false;
+            };
 
-            // 2. Filtrar por Nombre de Comerciante (Nickname)
+            listas.compras = listas.compras.filter(filtrarPorExchanges);
+            listas.ventas = listas.ventas.filter(filtrarPorExchanges);
+            listas.compras_liq = listas.compras_liq.filter(filtrarPorExchanges);
+            listas.ventas_liq = listas.ventas_liq.filter(filtrarPorExchanges);
+
             const inputNick = document.getElementById('input-buscador-nickname');
             const textoFiltroNick = inputNick ? inputNick.value.toLowerCase().trim() : '';
 
@@ -420,7 +507,7 @@
             tbody.innerHTML = '';
 
             if (lista.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-500 italic">Sin registros</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-500 italic">Sin registros</td></tr>`;
                 return;
             }
 
@@ -433,11 +520,12 @@
 
                 if (ex.includes('binance')) imagenSrc = 'img/binance.png';
                 else if (ex.includes('bybit')) imagenSrc = 'img/bybit.png';
+                else if (ex.includes('bitget')) imagenSrc = 'img/bitget.png';
                 else if (ex.includes('bingx')) imagenSrc = 'img/bingx.png';
                 else if (ex.includes('mexc')) imagenSrc = 'img/mexc.png';
 
                 let badgeExchange = imagenSrc 
-                    ? `<img src="${imagenSrc}" alt="${item.exchange}" class="h-5 w-auto object-contain inline-block" title="${item.exchange}">` 
+                    ? `<img src="${imagenSrc}" alt="${item.exchange}" class="h-5 w-auto object-contain inline-block mx-auto" title="${item.exchange}">` 
                     : `<span class="px-1.5 py-0.5 text-[10px] font-semibold bg-purple-500/10 text-purple-400 rounded border border-purple-500/20">${item.exchange || 'N/A'}</span>`;
 
                 const cantStr = String(item.cantidad_transaccionada ?? item.cantidad_actual ?? '0').replace(',', '.');
@@ -446,6 +534,7 @@
                 const precio = parseFloat(precStr) || 0;
 
                 const esGrande = cantidad >= umbralDestacar;
+                const horaConvertida = convertirUtcAUltimaHora(item.fecha, item.hora);
 
                 const tr = document.createElement('tr');
                 
@@ -456,12 +545,13 @@
                 }
 
                 tr.innerHTML = `
-                    <td class="py-2.5 px-2 truncate max-w-[110px]" title="${item.nickName || '-'}">${item.nickName || '-'}</td>
-                    <td class="py-2.5 px-2">${badgeExchange}</td>
-                    <td class="py-2.5 px-2 text-right ${esGrande ? 'text-amber-300 font-bold' : 'text-emerald-400 font-semibold'}">
+                    <td class="py-2.5 px-1.5 text-slate-400 font-mono text-[11px]">${horaConvertida}</td>
+                    <td class="py-2.5 px-1.5 truncate max-w-[120px]" title="${item.nickName || '-'}">${item.nickName || '-'}</td>
+                    <td class="py-2.5 px-1.5 text-center">${badgeExchange}</td>
+                    <td class="py-2.5 px-1.5 text-right ${esGrande ? 'text-amber-300 font-bold' : 'text-emerald-400 font-semibold'}">
                         ${cantidad.toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
                     </td>
-                    <td class="py-2.5 px-2 text-right font-mono">${item.precio || '-'}</td>
+                    <td class="py-2.5 px-1.5 text-right font-mono">${item.precio || '-'}</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -470,10 +560,6 @@
         window.onload = () => {
             inicializarFechas();
             cargarDatos();
-
-            setInterval(() => {
-                cargarDatos();
-            }, 10000);
         };
     </script>
 </body>
