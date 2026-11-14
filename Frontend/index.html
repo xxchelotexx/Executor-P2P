@@ -38,75 +38,110 @@
             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider whitespace-nowrap pl-2">Filtrar Exchange:</span>
             <div class="flex items-center gap-2">
                 <button onclick="toggleExchange('binance')" id="filtro-binance" class="exchange-filter px-3 py-1.5 rounded-lg border border-emerald-500 bg-emerald-500/20 text-emerald-400 text-xs font-medium flex items-center gap-2 transition hover:bg-slate-700">
-                    <img src="img/binance.png" alt="Binance" class="h-5 w-auto object-contain"> Binance
+                    <img src="img/binance.png" alt="Binance" class="h-5 w-auto object-contain"> 
                 </button>
                 <button onclick="toggleExchange('bybit')" id="filtro-bybit" class="exchange-filter px-3 py-1.5 rounded-lg border border-emerald-500 bg-emerald-500/20 text-emerald-400 text-xs font-medium flex items-center gap-2 transition hover:bg-slate-700">
-                    <img src="img/bybit.png" alt="Bybit" class="h-5 w-auto object-contain"> Bybit
+                    <img src="img/bybit.png" alt="Bybit" class="h-5 w-auto object-contain"> 
                 </button>
                 <button onclick="toggleExchange('bitget')" id="filtro-bitget" class="exchange-filter px-3 py-1.5 rounded-lg border border-emerald-500 bg-emerald-500/20 text-emerald-400 text-xs font-medium flex items-center gap-2 transition hover:bg-slate-700">
-                    <img src="img/bitget.png" alt="Bitget" class="h-5 w-auto object-contain"> Bitget
+                    <img src="img/bitget.png" alt="Bitget" class="h-5 w-auto object-contain"> 
                 </button>
                 <button onclick="toggleExchange('bingx')" id="filtro-bingx" class="exchange-filter px-3 py-1.5 rounded-lg border border-emerald-500 bg-emerald-500/20 text-emerald-400 text-xs font-medium flex items-center gap-2 transition hover:bg-slate-700">
-                    <img src="img/bingx.png" alt="BingX" class="h-5 w-auto object-contain"> BingX
+                    <img src="img/bingx.png" alt="BingX" class="h-5 w-auto object-contain"> 
                 </button>
                 <button onclick="toggleExchange('mexc')" id="filtro-mexc" class="exchange-filter px-3 py-1.5 rounded-lg border border-emerald-500 bg-emerald-500/20 text-emerald-400 text-xs font-medium flex items-center gap-2 transition hover:bg-slate-700">
-                    <img src="img/mexc.png" alt="MEXC" class="h-5 w-auto object-contain"> MEXC
+                    <img src="img/mexc.png" alt="MEXC" class="h-5 w-auto object-contain"> 
                 </button>
             </div>
         </div>
 
-        <!-- Controles de Parámetros -->
-        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 mb-6 flex flex-wrap items-center justify-between gap-4 shadow-lg">
+        <!-- Controles de Parámetros y Filtros -->
+        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 mb-6 flex flex-col gap-4 shadow-lg">
             
-            <div class="flex flex-wrap items-center gap-4">
-                <!-- Controles para /ultimas_ordenes -->
-                <div id="controles-ultimas" class="flex flex-wrap items-center gap-4">
-                    <div class="flex items-center gap-3">
-                        <label class="text-sm font-medium text-slate-300">Minutos a consultar:</label>
-                        <select id="input-minutos" onchange="cargarDatos()" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-emerald-500 text-slate-200">
-                            <option value="5">5 minutos</option>
-                            <option value="10">10 minutos</option>
-                            <option value="15" selected>15 minutos</option>
-                            <option value="30">30 minutos</option>
-                            <option value="60">60 minutos</option>
-                        </select>
+            <!-- Fila Superior: Consulta, Monto, Nickname y Botones -->
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="flex flex-wrap items-center gap-4">
+                    <!-- Controles para /ultimas_ordenes -->
+                    <div id="controles-ultimas" class="flex flex-wrap items-center gap-4">
+                        <div class="flex items-center gap-3">
+                            <label class="text-sm font-medium text-slate-300">Minutos a consultar:</label>
+                            <select id="input-minutos" onchange="cargarDatos()" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-emerald-500 text-slate-200">
+                                <option value="5">5 minutos</option>
+                                <option value="10">10 minutos</option>
+                                <option value="15" selected>15 minutos</option>
+                                <option value="30">30 minutos</option>
+                                <option value="60">60 minutos</option>
+                            </select>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <label class="text-sm font-medium text-slate-300">Monto a destacar:</label>
+                            <input type="number" id="input-monto-destacar" value="10000" step="0.01" min="0" oninput="actualizarUI()" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-emerald-500 text-slate-200 w-32 font-mono">
+                        </div>
                     </div>
 
-                    <div class="flex items-center gap-3">
-                        <label class="text-sm font-medium text-slate-300">Monto a destacar:</label>
-                        <input type="number" id="input-monto-destacar" value="10000" step="0.01" min="0" oninput="actualizarUI()" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-emerald-500 text-slate-200 w-32 font-mono">
+                    <!-- Controles para /ordenes (Rango de Fechas) -->
+                    <div id="controles-rango" class="hidden flex flex-wrap items-center gap-3">
+                        <div>
+                            <label class="text-xs text-slate-400 block mb-1">Fecha Inicio:</label>
+                            <input type="datetime-local" id="input-inicio" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-400 block mb-1">Fecha Fin:</label>
+                            <input type="datetime-local" id="input-fin" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+
+                    <!-- Filtro por Comerciante (Nickname) + Botón Limpiar -->
+                    <div class="flex items-center gap-2">
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                            </span>
+                            <input type="text" id="input-buscador-nickname" placeholder="Filtrar comerciante..." oninput="actualizarUI()" class="bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-1.5 text-sm focus:outline-none focus:border-emerald-500 text-slate-200 w-44">
+                        </div>
+                        <button onclick="limpiarFiltros()" title="Limpiar todos los filtros" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-1.5 border border-slate-600">
+                            <i class="fa-solid fa-broom text-xs"></i> Limpiar
+                        </button>
                     </div>
                 </div>
 
-                <!-- Controles para /ordenes (Rango de Fechas) -->
-                <div id="controles-rango" class="hidden flex flex-wrap items-center gap-3">
-                    <div>
-                        <label class="text-xs text-slate-400 block mb-1">Fecha Inicio:</label>
-                        <input type="datetime-local" id="input-inicio" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-emerald-500">
+                <button id="btn-consultar" onclick="cargarDatos()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 shadow-lg shadow-emerald-900/20">
+                    <i id="icon-consultar" class="fa-solid fa-rotate"></i> <span id="lbl-btn-consultar">Consultar API</span>
+                </button>
+            </div>
+
+            <!-- Fila Inferior: Nuevos Filtros de Precio -->
+            <div class="pt-3 border-t border-slate-700/70 flex flex-wrap items-center gap-4">
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <i class="fa-solid fa-filter text-emerald-400"></i> Filtros de Precio:
+                </span>
+
+                <!-- Ventas -->
+                <div class="flex flex-wrap items-center gap-3 bg-slate-900/50 px-3 py-1.5 rounded-lg border border-slate-700/60">
+                    <div class="flex items-center gap-2">
+                        <label for="filtro-venta-mayor" class="text-xs font-medium text-emerald-400">Precio Ventas mayor que:</label>
+                        <input type="number" id="filtro-venta-mayor" step="0.01" placeholder="Ej: 11.9" oninput="actualizarUI()" class="bg-slate-900 border border-slate-700 rounded-md px-2.5 py-1 text-xs focus:outline-none focus:border-emerald-500 text-slate-200 w-24 font-mono">
                     </div>
-                    <div>
-                        <label class="text-xs text-slate-400 block mb-1">Fecha Fin:</label>
-                        <input type="datetime-local" id="input-fin" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-emerald-500">
+                    <div class="flex items-center gap-2">
+                        <label for="filtro-venta-menor" class="text-xs font-medium text-emerald-400">Precio Ventas menor que:</label>
+                        <input type="number" id="filtro-venta-menor" step="0.01" placeholder="Ej: 12.5" oninput="actualizarUI()" class="bg-slate-900 border border-slate-700 rounded-md px-2.5 py-1 text-xs focus:outline-none focus:border-emerald-500 text-slate-200 w-24 font-mono">
                     </div>
                 </div>
 
-                <!-- Filtro por Comerciante (Nickname) + Botón Limpiar -->
-                <div class="flex items-center gap-2">
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
-                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
-                        </span>
-                        <input type="text" id="input-buscador-nickname" placeholder="Filtrar comerciante..." oninput="actualizarUI()" class="bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-1.5 text-sm focus:outline-none focus:border-emerald-500 text-slate-200 w-44">
+                <!-- Compras -->
+                <div class="flex flex-wrap items-center gap-3 bg-slate-900/50 px-3 py-1.5 rounded-lg border border-slate-700/60">
+                    <div class="flex items-center gap-2">
+                        <label for="filtro-compra-mayor" class="text-xs font-medium text-rose-400">Precio Compras mayor que:</label>
+                        <input type="number" id="filtro-compra-mayor" step="0.01" placeholder="Ej: 11.5" oninput="actualizarUI()" class="bg-slate-900 border border-slate-700 rounded-md px-2.5 py-1 text-xs focus:outline-none focus:border-rose-500 text-slate-200 w-24 font-mono">
                     </div>
-                    <button onclick="limpiarFiltros()" title="Limpiar todos los filtros" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-1.5 border border-slate-600">
-                        <i class="fa-solid fa-broom text-xs"></i> Limpiar
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <label for="filtro-compra-menor" class="text-xs font-medium text-rose-400">Precio Compras menor que:</label>
+                        <input type="number" id="filtro-compra-menor" step="0.01" placeholder="Ej: 12.0" oninput="actualizarUI()" class="bg-slate-900 border border-slate-700 rounded-md px-2.5 py-1 text-xs focus:outline-none focus:border-rose-500 text-slate-200 w-24 font-mono">
+                    </div>
                 </div>
             </div>
 
-            <button id="btn-consultar" onclick="cargarDatos()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 shadow-lg shadow-emerald-900/20">
-                <i id="icon-consultar" class="fa-solid fa-rotate"></i> <span id="lbl-btn-consultar">Consultar API</span>
-            </button>
         </div>
 
         <!-- Información de Intervalo y Temporizador -->
@@ -317,6 +352,12 @@
             const inputNick = document.getElementById('input-buscador-nickname');
             if (inputNick) inputNick.value = '';
 
+            // Limpiar filtros de precio
+            document.getElementById('filtro-venta-mayor').value = '';
+            document.getElementById('filtro-venta-menor').value = '';
+            document.getElementById('filtro-compra-mayor').value = '';
+            document.getElementById('filtro-compra-menor').value = '';
+
             document.getElementById('input-minutos').value = '15';
             document.getElementById('input-monto-destacar').value = '10000';
 
@@ -451,6 +492,11 @@
             return num.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
 
+        function obtenerPrecioNumerico(item) {
+            const precStr = String(item.precio ?? '0').replace(',', '.');
+            return parseFloat(precStr);
+        }
+
         function actualizarUI() {
             if (!datosGlobales) return;
 
@@ -459,6 +505,7 @@
 
             let listas = clasificarRegistros(datosGlobales.data || {});
 
+            // 1. Filtrar por Exchanges
             const filtrarPorExchanges = (item) => {
                 const exItem = (item.exchange || '').toLowerCase();
                 for (let ex of exchangesSeleccionados) {
@@ -472,6 +519,7 @@
             listas.compras_liq = listas.compras_liq.filter(filtrarPorExchanges);
             listas.ventas_liq = listas.ventas_liq.filter(filtrarPorExchanges);
 
+            // 2. Filtrar por Nickname
             const inputNick = document.getElementById('input-buscador-nickname');
             const textoFiltroNick = inputNick ? inputNick.value.toLowerCase().trim() : '';
 
@@ -487,6 +535,43 @@
                 listas.ventas_liq = listas.ventas_liq.filter(filtrarPorNickname);
             }
 
+            // 3. Filtrar por Precios de Ventas (Mayor/Igual y Menor/Igual)
+            const valVentaMayor = document.getElementById('filtro-venta-mayor').value.trim();
+            const valVentaMenor = document.getElementById('filtro-venta-menor').value.trim();
+            const ventaMin = valVentaMayor !== '' ? parseFloat(valVentaMayor) : null;
+            const ventaMax = valVentaMenor !== '' ? parseFloat(valVentaMenor) : null;
+
+            if ((ventaMin !== null && !isNaN(ventaMin)) || (ventaMax !== null && !isNaN(ventaMax))) {
+                const filtrarPrecioVenta = (item) => {
+                    const p = obtenerPrecioNumerico(item);
+                    if (isNaN(p)) return false;
+                    if (ventaMin !== null && !isNaN(ventaMin) && p < ventaMin) return false;
+                    if (ventaMax !== null && !isNaN(ventaMax) && p > ventaMax) return false;
+                    return true;
+                };
+                listas.ventas = listas.ventas.filter(filtrarPrecioVenta);
+                listas.ventas_liq = listas.ventas_liq.filter(filtrarPrecioVenta);
+            }
+
+            // 4. Filtrar por Precios de Compras (Mayor/Igual y Menor/Igual)
+            const valCompraMayor = document.getElementById('filtro-compra-mayor').value.trim();
+            const valCompraMenor = document.getElementById('filtro-compra-menor').value.trim();
+            const compraMin = valCompraMayor !== '' ? parseFloat(valCompraMayor) : null;
+            const compraMax = valCompraMenor !== '' ? parseFloat(valCompraMenor) : null;
+
+            if ((compraMin !== null && !isNaN(compraMin)) || (compraMax !== null && !isNaN(compraMax))) {
+                const filtrarPrecioCompra = (item) => {
+                    const p = obtenerPrecioNumerico(item);
+                    if (isNaN(p)) return false;
+                    if (compraMin !== null && !isNaN(compraMin) && p < compraMin) return false;
+                    if (compraMax !== null && !isNaN(compraMax) && p > compraMax) return false;
+                    return true;
+                };
+                listas.compras = listas.compras.filter(filtrarPrecioCompra);
+                listas.compras_liq = listas.compras_liq.filter(filtrarPrecioCompra);
+            }
+
+            // Actualizar Badges y Volúmenes
             document.getElementById('badge-ventas').textContent = listas.ventas.length;
             document.getElementById('badge-compras').textContent = listas.compras.length;
             document.getElementById('badge-ventas-liq').textContent = listas.ventas_liq.length;
@@ -530,9 +615,7 @@
                     : `<span class="px-1.5 py-0.5 text-[10px] font-semibold bg-purple-500/10 text-purple-400 rounded border border-purple-500/20">${item.exchange || 'N/A'}</span>`;
 
                 const cantStr = String(item.cantidad_transaccionada ?? item.cantidad_actual ?? '0').replace(',', '.');
-                const precStr = String(item.precio ?? '0').replace(',', '.');
                 const cantidad = parseFloat(cantStr) || 0;
-                const precio = parseFloat(precStr) || 0;
 
                 const esGrande = cantidad >= umbralDestacar;
                 const horaConvertida = convertirUtcAUltimaHora(item.fecha, item.hora);
