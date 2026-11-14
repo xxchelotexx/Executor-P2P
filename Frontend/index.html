@@ -288,6 +288,13 @@
                 btnUltimas.className = "px-4 py-2 text-sm font-medium rounded-md transition text-slate-300 hover:text-white";
                 ctrlRango.classList.remove('hidden');
                 ctrlUltimas.classList.add('hidden');
+                
+                // Detener el temporizador inmediatamente al cambiar a modo Rango
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                }
+                document.getElementById('lbl-timer').textContent = 'Desactivado';
             }
             cargarDatos();
         }
@@ -310,8 +317,8 @@
             const inputNick = document.getElementById('input-buscador-nickname');
             if (inputNick) inputNick.value = '';
 
-            document.getElementById('input-minutos').value = '5';
-            document.getElementById('input-monto-destacar').value = '5000';
+            document.getElementById('input-minutos').value = '15';
+            document.getElementById('input-monto-destacar').value = '10000';
 
             inicializarFechas();
 
@@ -328,6 +335,13 @@
 
         function iniciarTimerAutoRefresco() {
             if (timerInterval) clearInterval(timerInterval);
+
+            // Si estamos en modo rango, no iniciamos el auto-refresco y actualizamos la etiqueta
+            if (modoActual === 'rango') {
+                document.getElementById('lbl-timer').textContent = 'Desactivado';
+                return;
+            }
+
             tiempoRestante = 8;
             document.getElementById('lbl-timer').textContent = `${tiempoRestante}s`;
 
@@ -373,7 +387,7 @@
                 actualizarUI();
             } catch (error) {
                 console.error(error);
-                console.warn('No se pudo conectar a la API local.');
+                console.warn('No se pudo conectar a la API.');
             } finally {
                 btn.disabled = false;
                 btn.classList.remove('opacity-75', 'cursor-not-allowed');
