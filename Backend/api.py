@@ -142,6 +142,62 @@ async def get_ultimas_ordenes(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# @app.get("/ordenes")
+# async def get_ordenes_por_rango(
+#     fecha_inicio: str = Query(..., description="Fecha y hora de inicio en formato YYYY-MM-DD HH:MM:SS (Ej: 2026-10-27 05:15:00)"),
+#     fecha_fin: str = Query(..., description="Fecha y hora de fin en formato YYYY-MM-DD HH:MM:SS (Ej: 2026-10-27 23:59:59)")
+# ):
+#     try:
+#         try:
+#             dt_inicio_local = datetime.strptime(fecha_inicio, "%Y-%m-%d %H:%M:%S").replace(tzinfo=UTC_MINUS_4)
+#             dt_fin_local = datetime.strptime(fecha_fin, "%Y-%m-%d %H:%M:%S").replace(tzinfo=UTC_MINUS_4)
+
+#             dt_inicio_utc = dt_inicio_local.astimezone(timezone.utc)
+#             dt_fin_utc = dt_fin_local.astimezone(timezone.utc)
+#         except ValueError:
+#             raise HTTPException(
+#                 status_code=400, 
+#                 detail="Formato de fecha inválido. Utilice estrictamente el formato: YYYY-MM-DD HH:MM:SS (ej. 2026-10-27 05:15:00)"
+#             )
+
+#         cursor = collection.find({
+#             "timestamp_analisis": {
+#                 "$gte": dt_inicio_utc,
+#                 "$lte": dt_fin_utc
+#             }
+#         }).sort("timestamp_analisis", -1)
+
+#         resultados = await cursor.to_list(length=500)
+#         compras, ventas, liquidados_apagados = procesar_y_agrupar_eventos(resultados)
+
+#         volumen_compras = sum(e.get("cantidad_transaccionada", 0) for e in compras)
+#         volumen_ventas = sum(e.get("cantidad_transaccionada", 0) for e in ventas)
+#         volumen_liquidados = sum(e.get("cantidad_transaccionada", 0) for e in liquidados_apagados)
+
+#         total_compras_len = len(compras)
+#         total_ventas_len = len(ventas)
+
+#         return {
+#             "Hora_inicio_UTC_minus_4": dt_inicio_local.strftime("%Y-%m-%d %H:%M:%S"),
+#             "Hora_fin_UTC_minus_4": dt_fin_local.strftime("%Y-%m-%d %H:%M:%S"),
+#             "total_registros": total_compras_len + total_ventas_len,
+#             "total_compras": total_compras_len,
+#             "total_ventas": total_ventas_len,
+#             "total_liquidados_apagados": len(liquidados_apagados),
+#             "volumen_compras": round(volumen_compras, 2),
+#             "volumen_ventas": round(volumen_ventas, 2),
+#             "volumen_liquidados_apagados": round(volumen_liquidados, 2),
+#             "data": {
+#                 "ventas": ventas,
+#                 "compras": compras,
+#                 "Liquidado/Apagado": liquidados_apagados
+#             }
+#         }
+
+#     except HTTPException as he:
+#         raise he
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
 @app.get("/ordenes")
 async def get_ordenes_por_rango(
     fecha_inicio: str = Query(..., description="Fecha y hora de inicio en formato YYYY-MM-DD HH:MM:SS (Ej: 2026-10-27 05:15:00)"),
@@ -167,7 +223,11 @@ async def get_ordenes_por_rango(
             }
         }).sort("timestamp_analisis", -1)
 
-        resultados = await cursor.to_list(length=500)
+        # Recorrer todo el cursor para obtener todos los documentos del rango sin límite de 500
+        resultados = []
+        async for doc in cursor:
+            resultados.append(doc)
+
         compras, ventas, liquidados_apagados = procesar_y_agrupar_eventos(resultados)
 
         volumen_compras = sum(e.get("cantidad_transaccionada", 0) for e in compras)
@@ -198,6 +258,7 @@ async def get_ordenes_por_rango(
         raise he
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 if __name__ == "__main__":
     import uvicorn
