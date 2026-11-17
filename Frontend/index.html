@@ -111,7 +111,7 @@
                 </button>
             </div>
 
-            <!-- Fila Inferior: Nuevos Filtros de Precio -->
+            <!-- Fila Inferior: Filtros de Precio -->
             <div class="pt-3 border-t border-slate-700/70 flex flex-wrap items-center gap-4">
                 <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                     <i class="fa-solid fa-filter text-emerald-400"></i> Filtros de Precio:
@@ -151,65 +151,97 @@
             <span><i class="fa-solid fa-bolt text-emerald-400"></i> Auto-refresco: <strong id="lbl-timer" class="text-emerald-400 font-mono font-bold text-sm">8s</strong></span>
         </div>
 
-        <!-- Layout de 4 Columnas (Kanban) en el orden exacto solicitado -->
-        <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4">
+        <!-- Layout de 4 Columnas (Kanban) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4 items-start">
             
-            <!-- 1. Ventas (VERDE) -->
-            <div class="bg-slate-800 rounded-xl border border-slate-700 flex flex-col h-[680px] shadow-xl overflow-hidden">
-                <div class="p-3 bg-slate-850 border-b border-slate-700 flex justify-between items-center">
-                    <h2 class="font-bold text-emerald-400 flex items-center gap-2 text-sm uppercase tracking-wider">
-                        <i class="fa-solid fa-tag"></i> Ventas
-                    </h2>
-                    <div class="flex items-center gap-3">
-                        <span id="vol-ventas" class="text-emerald-400 font-bold text-sm font-mono">0,00</span>
-                        <span id="badge-ventas" class="bg-emerald-500/10 text-emerald-400 text-xs px-2.5 py-1 rounded-full font-semibold border border-emerald-500/20">0</span>
+            <!-- 1. Columna Ventas (Con Recuadro TOP 3 Superior) -->
+            <div class="flex flex-col gap-3">
+                <!-- Recuadro TOP 3 Ventas -->
+                <div class="bg-slate-800 rounded-xl border border-emerald-500/40 p-3 shadow-lg">
+                    <div class="flex items-center justify-between mb-2 pb-1.5 border-b border-slate-700/80">
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-trophy text-amber-400"></i> Top 3 Volumen Ventas
+                        </span>
+                        <span id="lbl-periodo-top-ventas" class="text-[10px] font-semibold bg-slate-900 text-slate-400 px-2 py-0.5 rounded border border-slate-700">15 min</span>
+                    </div>
+                    <div id="top3-ventas-lista" class="space-y-1.5 text-xs">
+                        <div class="text-slate-500 italic text-center py-2">Sin datos</div>
                     </div>
                 </div>
-                <div class="overflow-y-auto flex-1 p-1">
-                    <table class="w-full text-left border-collapse text-xs table-auto">
-                        <thead class="sticky top-0 bg-slate-800/95 backdrop-blur z-10 text-slate-400 uppercase tracking-wider border-b border-slate-700">
-                            <tr>
-                                <th class="py-2 px-1.5 w-[18%]">Hora</th>
-                                <th class="py-2 px-1.5 w-[32%]">Nickname</th>
-                                <th class="py-2 px-1.5 w-[15%] text-center">Exch.</th>
-                                <th class="py-2 px-1.5 w-[20%] text-right">Cant.</th>
-                                <th class="py-2 px-1.5 w-[15%] text-right">Precio</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabla-ventas" class="divide-y divide-slate-700/50"></tbody>
-                    </table>
+
+                <!-- Tabla Ventas -->
+                <div class="bg-slate-800 rounded-xl border border-slate-700 flex flex-col h-[680px] shadow-xl overflow-hidden">
+                    <div class="p-3 bg-slate-850 border-b border-slate-700 flex justify-between items-center">
+                        <h2 class="font-bold text-emerald-400 flex items-center gap-2 text-sm uppercase tracking-wider">
+                            <i class="fa-solid fa-tag"></i> Ventas
+                        </h2>
+                        <div class="flex items-center gap-3">
+                            <span id="vol-ventas" class="text-emerald-400 font-bold text-sm font-mono">0,00</span>
+                            <span id="badge-ventas" class="bg-emerald-500/10 text-emerald-400 text-xs px-2.5 py-1 rounded-full font-semibold border border-emerald-500/20">0</span>
+                        </div>
+                    </div>
+                    <div class="overflow-y-auto flex-1 p-1">
+                        <table class="w-full text-left border-collapse text-xs table-auto">
+                            <thead class="sticky top-0 bg-slate-800/95 backdrop-blur z-10 text-slate-400 uppercase tracking-wider border-b border-slate-700">
+                                <tr>
+                                    <th class="py-2 px-1.5 w-[18%]">Hora</th>
+                                    <th class="py-2 px-1.5 w-[32%]">Nickname</th>
+                                    <th class="py-2 px-1.5 w-[15%] text-center">Exch.</th>
+                                    <th class="py-2 px-1.5 w-[20%] text-right">Cant.</th>
+                                    <th class="py-2 px-1.5 w-[15%] text-right">Precio</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-ventas" class="divide-y divide-slate-700/50"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <!-- 2. Compras (ROJO) -->
-            <div class="bg-slate-800 rounded-xl border border-slate-700 flex flex-col h-[680px] shadow-xl overflow-hidden">
-                <div class="p-3 bg-slate-850 border-b border-slate-700 flex justify-between items-center">
-                    <h2 class="font-bold text-rose-400 flex items-center gap-2 text-sm uppercase tracking-wider">
-                        <i class="fa-solid fa-cart-shopping"></i> Compras
-                    </h2>
-                    <div class="flex items-center gap-3">
-                        <span id="vol-compras" class="text-rose-400 font-bold text-sm font-mono">0,00</span>
-                        <span id="badge-compras" class="bg-rose-500/10 text-rose-400 text-xs px-2.5 py-1 rounded-full font-semibold border border-rose-500/20">0</span>
+            <!-- 2. Columna Compras (Con Recuadro TOP 3 Superior) -->
+            <div class="flex flex-col gap-3">
+                <!-- Recuadro TOP 3 Compras -->
+                <div class="bg-slate-800 rounded-xl border border-rose-500/40 p-3 shadow-lg">
+                    <div class="flex items-center justify-between mb-2 pb-1.5 border-b border-slate-700/80">
+                        <span class="text-xs font-bold uppercase tracking-wider text-rose-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-trophy text-amber-400"></i> Top 3 Volumen Compras
+                        </span>
+                        <span id="lbl-periodo-top-compras" class="text-[10px] font-semibold bg-slate-900 text-slate-400 px-2 py-0.5 rounded border border-slate-700">15 min</span>
+                    </div>
+                    <div id="top3-compras-lista" class="space-y-1.5 text-xs">
+                        <div class="text-slate-500 italic text-center py-2">Sin datos</div>
                     </div>
                 </div>
-                <div class="overflow-y-auto flex-1 p-1">
-                    <table class="w-full text-left border-collapse text-xs table-auto">
-                        <thead class="sticky top-0 bg-slate-800/95 backdrop-blur z-10 text-slate-400 uppercase tracking-wider border-b border-slate-700">
-                            <tr>
-                                <th class="py-2 px-1.5 w-[18%]">Hora</th>
-                                <th class="py-2 px-1.5 w-[32%]">Nickname</th>
-                                <th class="py-2 px-1.5 w-[15%] text-center">Exch.</th>
-                                <th class="py-2 px-1.5 w-[20%] text-right">Cant.</th>
-                                <th class="py-2 px-1.5 w-[15%] text-right">Precio</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabla-compras" class="divide-y divide-slate-700/50"></tbody>
-                    </table>
+
+                <!-- Tabla Compras -->
+                <div class="bg-slate-800 rounded-xl border border-slate-700 flex flex-col h-[680px] shadow-xl overflow-hidden">
+                    <div class="p-3 bg-slate-850 border-b border-slate-700 flex justify-between items-center">
+                        <h2 class="font-bold text-rose-400 flex items-center gap-2 text-sm uppercase tracking-wider">
+                            <i class="fa-solid fa-cart-shopping"></i> Compras
+                        </h2>
+                        <div class="flex items-center gap-3">
+                            <span id="vol-compras" class="text-rose-400 font-bold text-sm font-mono">0,00</span>
+                            <span id="badge-compras" class="bg-rose-500/10 text-rose-400 text-xs px-2.5 py-1 rounded-full font-semibold border border-rose-500/20">0</span>
+                        </div>
+                    </div>
+                    <div class="overflow-y-auto flex-1 p-1">
+                        <table class="w-full text-left border-collapse text-xs table-auto">
+                            <thead class="sticky top-0 bg-slate-800/95 backdrop-blur z-10 text-slate-400 uppercase tracking-wider border-b border-slate-700">
+                                <tr>
+                                    <th class="py-2 px-1.5 w-[18%]">Hora</th>
+                                    <th class="py-2 px-1.5 w-[32%]">Nickname</th>
+                                    <th class="py-2 px-1.5 w-[15%] text-center">Exch.</th>
+                                    <th class="py-2 px-1.5 w-[20%] text-right">Cant.</th>
+                                    <th class="py-2 px-1.5 w-[15%] text-right">Precio</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-compras" class="divide-y divide-slate-700/50"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <!-- 3. Ventas Liquidadas/Apagadas (VERDE) -->
-            <div class="bg-slate-800 rounded-xl border border-slate-700 flex flex-col h-[680px] shadow-xl overflow-hidden">
+            <!-- 3. Ventas Liquidadas/Apagadas -->
+            <div class="bg-slate-800 rounded-xl border border-slate-700 flex flex-col h-[818px] shadow-xl overflow-hidden">
                 <div class="p-3 bg-slate-850 border-b border-slate-700 flex justify-between items-center">
                     <h2 class="font-bold text-teal-400 flex items-center gap-2 text-sm uppercase tracking-wider">
                         <i class="fa-solid fa-triangle-exclamation"></i> Ventas Liq./Apag.
@@ -235,8 +267,8 @@
                 </div>
             </div>
 
-            <!-- 4. Compras Liquidadas/Apagadas (ROJO) -->
-            <div class="bg-slate-800 rounded-xl border border-slate-700 flex flex-col h-[680px] shadow-xl overflow-hidden">
+            <!-- 4. Compras Liquidadas/Apagadas -->
+            <div class="bg-slate-800 rounded-xl border border-slate-700 flex flex-col h-[818px] shadow-xl overflow-hidden">
                 <div class="p-3 bg-slate-850 border-b border-slate-700 flex justify-between items-center">
                     <h2 class="font-bold text-amber-400 flex items-center gap-2 text-sm uppercase tracking-wider">
                         <i class="fa-solid fa-check-double"></i> Compras Liq./Apag.
@@ -324,7 +356,6 @@
                 ctrlRango.classList.remove('hidden');
                 ctrlUltimas.classList.add('hidden');
                 
-                // Detener el temporizador inmediatamente al cambiar a modo Rango
                 if (timerInterval) {
                     clearInterval(timerInterval);
                     timerInterval = null;
@@ -352,7 +383,6 @@
             const inputNick = document.getElementById('input-buscador-nickname');
             if (inputNick) inputNick.value = '';
 
-            // Limpiar filtros de precio
             document.getElementById('filtro-venta-mayor').value = '';
             document.getElementById('filtro-venta-menor').value = '';
             document.getElementById('filtro-compra-mayor').value = '';
@@ -377,7 +407,6 @@
         function iniciarTimerAutoRefresco() {
             if (timerInterval) clearInterval(timerInterval);
 
-            // Si estamos en modo rango, no iniciamos el auto-refresco y actualizamos la etiqueta
             if (modoActual === 'rango') {
                 document.getElementById('lbl-timer').textContent = 'Desactivado';
                 return;
@@ -497,11 +526,69 @@
             return parseFloat(precStr);
         }
 
+        function obtenerCantidadNumerica(item) {
+            const cantStr = String(item.cantidad_transaccionada ?? item.cantidad_actual ?? '0').replace(',', '.');
+            return parseFloat(cantStr) || 0;
+        }
+
+        // Calcula y renderiza el TOP 3 de volumen acumulado por comerciante
+        function actualizarTop3(elementId, lista, colorClass) {
+            const contenedor = document.getElementById(elementId);
+            if (!contenedor) return;
+
+            if (!lista || lista.length === 0) {
+                contenedor.innerHTML = `<div class="text-slate-500 italic text-center py-2">Sin operaciones en este periodo</div>`;
+                return;
+            }
+
+            // Agrupar y sumar volumen por nickName
+            const mapaVolumen = new Map();
+            lista.forEach(item => {
+                const nick = (item.nickName || 'Desconocido').trim();
+                const cant = obtenerCantidadNumerica(item);
+                if (!mapaVolumen.has(nick)) {
+                    mapaVolumen.set(nick, { nick, total: 0, ops: 0 });
+                }
+                const registro = mapaVolumen.get(nick);
+                registro.total += cant;
+                registro.ops += 1;
+            });
+
+            // Ordenar por volumen total descendente y tomar los 3 primeros
+            const top3 = Array.from(mapaVolumen.values())
+                .sort((a, b) => b.total - a.total)
+                .slice(0, 3);
+
+            const medallas = [
+                '<span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/40 font-bold text-[10px]">1</span>',
+                '<span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-300/20 text-slate-200 border border-slate-300/40 font-bold text-[10px]">2</span>',
+                '<span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-orange-400/20 text-orange-300 border border-orange-400/40 font-bold text-[10px]">3</span>'
+            ];
+
+            contenedor.innerHTML = top3.map((item, idx) => `
+                <div class="flex items-center justify-between bg-slate-900/70 px-2.5 py-1.5 rounded-lg border border-slate-700/60">
+                    <div class="flex items-center gap-2 min-w-0">
+                        ${medallas[idx]}
+                        <span class="font-medium text-slate-200 truncate" title="${item.nick}">${item.nick}</span>
+                        <span class="text-[10px] text-slate-500 shrink-0">(${item.ops} op.)</span>
+                    </div>
+                    <span class="font-mono font-bold ${colorClass} shrink-0 ml-2">${formatearNumero(item.total)}</span>
+                </div>
+            `).join('');
+        }
+
         function actualizarUI() {
             if (!datosGlobales) return;
 
             document.getElementById('lbl-inicio').textContent = datosGlobales.Hora_inicio_UTC_minus_4 || '-';
             document.getElementById('lbl-fin').textContent = datosGlobales.Hora_fin_UTC_minus_4 || '-';
+
+            // Actualizar etiqueta de periodo en los recuadros TOP 3
+            const textoPeriodo = modoActual === 'ultimas'
+                ? `Últimos ${document.getElementById('input-minutos').value || 15} min`
+                : 'Rango seleccionado';
+            document.getElementById('lbl-periodo-top-ventas').textContent = textoPeriodo;
+            document.getElementById('lbl-periodo-top-compras').textContent = textoPeriodo;
 
             let listas = clasificarRegistros(datosGlobales.data || {});
 
@@ -535,7 +622,7 @@
                 listas.ventas_liq = listas.ventas_liq.filter(filtrarPorNickname);
             }
 
-            // 3. Filtrar por Precios de Ventas (Mayor/Igual y Menor/Igual)
+            // 3. Filtrar por Precios de Ventas
             const valVentaMayor = document.getElementById('filtro-venta-mayor').value.trim();
             const valVentaMenor = document.getElementById('filtro-venta-menor').value.trim();
             const ventaMin = valVentaMayor !== '' ? parseFloat(valVentaMayor) : null;
@@ -553,7 +640,7 @@
                 listas.ventas_liq = listas.ventas_liq.filter(filtrarPrecioVenta);
             }
 
-            // 4. Filtrar por Precios de Compras (Mayor/Igual y Menor/Igual)
+            // 4. Filtrar por Precios de Compras
             const valCompraMayor = document.getElementById('filtro-compra-mayor').value.trim();
             const valCompraMenor = document.getElementById('filtro-compra-menor').value.trim();
             const compraMin = valCompraMayor !== '' ? parseFloat(valCompraMayor) : null;
@@ -570,6 +657,10 @@
                 listas.compras = listas.compras.filter(filtrarPrecioCompra);
                 listas.compras_liq = listas.compras_liq.filter(filtrarPrecioCompra);
             }
+
+            // 5. Renderizar Recuadros TOP 3 (Volumen Acumulado por Comerciante)
+            actualizarTop3('top3-ventas-lista', listas.ventas, 'text-emerald-400');
+            actualizarTop3('top3-compras-lista', listas.compras, 'text-rose-400');
 
             // Actualizar Badges y Volúmenes
             document.getElementById('badge-ventas').textContent = listas.ventas.length;
@@ -614,9 +705,7 @@
                     ? `<img src="${imagenSrc}" alt="${item.exchange}" class="h-5 w-auto object-contain inline-block mx-auto" title="${item.exchange}">` 
                     : `<span class="px-1.5 py-0.5 text-[10px] font-semibold bg-purple-500/10 text-purple-400 rounded border border-purple-500/20">${item.exchange || 'N/A'}</span>`;
 
-                const cantStr = String(item.cantidad_transaccionada ?? item.cantidad_actual ?? '0').replace(',', '.');
-                const cantidad = parseFloat(cantStr) || 0;
-
+                const cantidad = obtenerCantidadNumerica(item);
                 const esGrande = cantidad >= umbralDestacar;
                 const horaConvertida = convertirUtcAUltimaHora(item.fecha, item.hora);
 
